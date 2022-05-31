@@ -1,0 +1,83 @@
+SUBROUTINE SECANT(X1, X2, X, TOLER, FUNC)
+  IMPLICIT NONE
+  DOUBLE PRECISION, INTENT (inout) :: X1, X2
+  DOUBLE PRECISION, INTENT (out)   :: X
+  DOUBLE PRECISION, INTENT (in)    :: TOLER
+  
+  INTERFACE
+     FUNCTION FUNC(X)
+       IMPLICIT NONE
+       DOUBLE PRECISION, INTENT (in) :: X
+       DOUBLE PRECISION :: FUNC
+     END FUNCTION FUNC
+  END INTERFACE
+
+  DOUBLE PRECISION :: F1, F2
+
+  F1 = FUNC(X1)
+  F2 = FUNC(X2)
+  
+  DO 
+     X = X2 - F2 * (X2 - X1) / (F2 - F1)
+
+     X1 = X2
+     F1 = F2
+
+     X2 = X
+     F2 = FUNC(X)
+
+     IF (ABS(F2) < TOLER) EXIT
+  END DO
+
+END SUBROUTINE SECANT
+
+
+!     The function
+FUNCTION F(X)
+  IMPLICIT NONE
+  DOUBLE PRECISION, INTENT (in) :: X
+  DOUBLE PRECISION :: F
+
+  F = 3.0D0 * LOG(X) + 5.0D0
+END FUNCTION F
+
+
+PROGRAM sec
+!    /////   SECANT   ///////
+
+  DOUBLE PRECISION, PARAMETER :: TOLER = 1D-8 ! A small constant number
+  DOUBLE PRECISION :: X, A, B
+  
+  INTERFACE 
+     SUBROUTINE SECANT(X1, X2, X, TOLER, FUNC)
+       IMPLICIT NONE
+       DOUBLE PRECISION, INTENT (inout) :: X1, X2
+       DOUBLE PRECISION, INTENT (out)   :: X
+       DOUBLE PRECISION, INTENT (in)    :: TOLER
+       
+       INTERFACE
+          FUNCTION FUNC(X)
+            IMPLICIT NONE
+            DOUBLE PRECISION, INTENT (in) :: X
+            DOUBLE PRECISION :: FUNC
+          END FUNCTION FUNC
+       END INTERFACE
+     END SUBROUTINE SECANT
+
+     FUNCTION F(X)
+       IMPLICIT NONE
+       DOUBLE PRECISION, INTENT (in) :: X
+       DOUBLE PRECISION :: F
+     END FUNCTION F
+  END INTERFACE
+
+!     Initial approximations
+  A = 0.1d0
+  B = 0.2d0
+  
+  CALL SECANT(A, B, X, TOLER, F)
+  
+  PRINT *, "A root is approximately ", X
+  PRINT *, "The function value is ", F(X)
+  
+END PROGRAM sec

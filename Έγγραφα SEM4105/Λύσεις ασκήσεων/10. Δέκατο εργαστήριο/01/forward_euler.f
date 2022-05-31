@@ -1,0 +1,30 @@
+      PROGRAM EULER
+      DOUBLE PRECISION A, B, H
+      PARAMETER (A=0.0D0, B=3.0D0, H=0.01D0)
+      DOUBLE PRECISION YINIT
+      PARAMETER (YINIT = 2.0D0)
+      DOUBLE PRECISION XOLD, YOLD, XNEW, YNEW, F
+      EXTERNAL F
+
+      XOLD = A
+      YOLD = YINIT
+
+ 10   XNEW = XOLD + H
+
+      YNEW = YOLD + F(XOLD,YOLD) * H
+      
+      PRINT *, XNEW, YNEW
+
+      XOLD = XNEW
+      YOLD = YNEW
+
+      IF (XOLD .LT. B) GOTO 10
+
+      END
+
+      FUNCTION F(X,Y)
+      DOUBLE PRECISION X,Y,F
+
+      F = COS(X)-X*SIN(x) 
+      END
+
